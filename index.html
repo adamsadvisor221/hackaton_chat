@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="main.css" type="text/css"/>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600&amp;subset=latin,cyrillic" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="page"> 
+      <h1 align="center" class="gray">Тема для обсуждения</h1>
+      <h1 align="center">#hackatonykt</h1>
+      <div class="message_div" style="overflow: scroll">
+      </div>
+      <form action="">
+        <input type="text" autocomplete="off" placeholder="Введите текст..." class="message_input"/>  
+      </form>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('chat message', $.trim($('.message_input').val()));
+        $('.message_input').val('');
+        return false;
+      });
+      socket.on('chat message', function(data){
+        if(data.token != stored_token) {
+          $('.message_div').append($('<p class="my_message bubble hide">').text(data.message));
+          $(".message_div").scrollTop($(".message_div")[0].scrollHeight);  
+        } 
+        else
+        {
+          $('.message_div').append($('<p class="stranger_message bubble_right hide">').text(data.message)); 
+          $(".message_div").scrollTop($(".message_div")[0].scrollHeight);  
+        }
+        $('p.hide').toggleClass('hide show');
+      });
+      var rand = function() {
+          return Math.random().toString(36).substr(2);
+      };
+      var token = function() {
+          return rand() + rand();
+      };
+      var send_token = function() {
+        window.stored_token = token();
+        return socket.emit('token', stored_token);
+      };
+      send_token();
+    </script>
+  </body>
+</html>
