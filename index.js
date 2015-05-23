@@ -11,6 +11,10 @@ app.get('/', function(req,res){
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+app.get('/f', function(req,res){
+	res.sendFile(path.join(__dirname + '/first.html'));
+});
+
 io.on('connection', function(socket){
 	socket.on('chat message', function(data){
 		console.log('message: ' + data);
@@ -19,6 +23,13 @@ io.on('connection', function(socket){
 				message: data, 
 				token: socket.token
 			});	
+		}
+	});
+	socket.on('tag input', function(data){
+		if(data.length > 0) {
+			io.emit('tag input', {
+				tagname: data
+			});
 		}
 	});
 	socket.on('disconnect', function(){

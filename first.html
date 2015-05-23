@@ -1,0 +1,31 @@
+
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" type="text/css"/>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,600&amp;subset=latin,cyrillic" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="page"> <img src="popizlogo.png" class="logo"/>
+      <div align="center" class="info">Введите интересную тему для обсуждения или выберите из имеющихся</div>
+      <form action="">
+        <input type="text" placeholder="Введите тему..." class="message_input"/>  
+      </form>
+      <div class="clear"></div>
+      <div class="tag">Фильмы</div>
+      <div class="tag">Музыка</div>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('tag input', $.trim($('.message_input').val()));
+        $('.message_input').val('');
+        return false;
+      });
+      socket.on('tag input', function(data){
+        $('.page').append($('<div class="tag">').text(data.tagname));
+      });
+    </script>
+  </body>
+</html>
